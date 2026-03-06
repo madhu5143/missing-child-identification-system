@@ -1,0 +1,42 @@
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+
+# Project Specific
+backend/static/
+uploads/
+test_images/
+*.db
+*.sqlite3
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# Batch scripts that might contain local paths
+*.bat
+!publish_app.bat
+!run_app.bat

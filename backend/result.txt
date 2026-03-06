@@ -1,0 +1,46 @@
+DATABASE: Using DB at postgresql://postgres:Madhu%40Naidu@db.wcdafauvjfrfxgcgcuni.supabase.co:5432/postgres
+--- Starting Debug Pipeline ---
+Db vector extracted from database, length 512. Example values: [ 0.00288232 -0.02781056 -0.01498802]
+Testing with image: https://wcdafauvjfrfxgcgcuni.supabase.co/storage/v1/object/public/missing-persons-images/67576a7d-016f-4acf-be34-13d8c77fd17c.jpeg
+
+--- Pipeline Execution ---
+Alignment engine warning (fallback to original): extract_faces() got an unexpected keyword argument 'target_size'
+Embedding norm: 3.3199806
+
+--- Vector Search ---
+Using operator: <#>
+Executing Query: 
+            SELECT 
+                r.child_id,
+                MAX(r.similarity) as best_match_score,
+                MAX(r.image_url) as matched_image,     -- Just returning one for UI reference
+                MAX(mp.full_name) as child_name,
+                MAX(mp.status) as child_status
+            FROM (
+                -- Subselect: rank ALL images individually by cosine inner product
+                SELECT 
+                    person_id as child_id, 
+                    file_path as image_url,
+                    (embedding_vector <#> :qvec) * -1 as similarity
+                FROM images
+                WHERE embedding_vector IS NOT NULL
+            ) r
+            JOIN missing_persons mp ON r.child_id = mp.id
+            GROUP BY r.child_id
+            ORDER BY best_match_score DESC
+            LIMIT :k;
+        
+Raw similarity value: 1.00000011920929
+Raw similarity value: 0.323677599430084
+Raw similarity value: 0.270092576742172
+Raw similarity value: 0.219997316598892
+Raw similarity value: 0.190841421484947
+
+--- Output Logs ---
+DEBUG: top1_sim = 1.00000011920929, top2_sim = 0.323677599430084
+
+--- Manual Dot Product Validation ---
+SQL Calculated top1_sim:  1.00000011920929
+Python calculated dot product: 1.0
+Difference: 1.1920928999487046e-07
+MATCH! The manual Python dot product matches the SQL result.

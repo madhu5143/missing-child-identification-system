@@ -1,0 +1,77 @@
+Traceback (most recent call last):
+  File "C:\Users\MadhuSudhan\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py", line 1960, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\MadhuSudhan\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.SyntaxError: syntax error at or near "#"
+LINE 9:                 # Subselect: rank ALL images individually by...
+                        ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\MadhuSudhan\OneDrive\Documents\missing_child_id_system\missing_child_id_system\backend\run_test.py", line 4, in <module>
+    test_debug.test_pipeline()
+  File "C:\Users\MadhuSudhan\OneDrive\Documents\missing_child_id_system\missing_child_id_system\backend\test_debug.py", line 61, in test_pipeline
+    candidates = search_database_top_k(db, query_vector_list, k=5)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MadhuSudhan\OneDrive\Documents\missing_child_id_system\missing_child_id_system\backend\app\vector_index.py", line 79, in search_database_top_k
+    return index.search_top_k(db, query_vector, k)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MadhuSudhan\OneDrive\Documents\missing_child_id_system\missing_child_id_system\backend\app\vector_index.py", line 53, in search_top_k
+    results = db_session.execute(query, {'qvec': vec_str, 'k': k})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MadhuSudhan\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\orm\session.py", line 2306, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MadhuSudhan\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\orm\session.py", line 2200, in _execute_internal
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "C:\Users\MadhuSudhan\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py", line 1408, in execute
+    return meth(
+           ^^^^^
+  File "C:\Users\MadhuSudhan\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\sql\elements.py", line 513, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MadhuSudhan\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py", line 1630, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MadhuSudhan\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py", line 1839, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MadhuSudhan\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py", line 1979, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\MadhuSudhan\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py", line 2335, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\MadhuSudhan\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py", line 1960, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\MadhuSudhan\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.SyntaxError) syntax error at or near "#"
+LINE 9:                 # Subselect: rank ALL images individually by...
+                        ^
+
+[SQL: 
+            SELECT 
+                r.child_id,
+                MAX(r.similarity) as best_match_score,
+                MAX(r.image_url) as matched_image,     -- Just returning one for UI reference
+                MAX(mp.full_name) as child_name,
+                MAX(mp.status) as child_status
+            FROM (
+                # Subselect: rank ALL images individually by cosine inner product
+                SELECT 
+                    person_id as child_id, 
+                    file_path as image_url,
+                    (embedding_vector <#> %(qvec)s) * -1 as similarity
+                FROM images
+                WHERE embedding_vector IS NOT NULL
+            ) r
+            JOIN missing_persons mp ON r.child_id = mp.id
+            GROUP BY r.child_id
+            ORDER BY best_match_score DESC
+            LIMIT %(k)s;
+        ]
+[parameters: {'qvec': '[0.0028822862077504396,-0.02781054750084877,-0.014988099224865437,-0.1548566222190857,-0.008260841481387615,-0.009216287173330784,-0.0195705983787775 ... (10478 characters truncated) ... -0.028228994458913803,-0.05733547732234001,-0.014288049191236496,0.021904872730374336,0.08566496521234512,0.016714047640562057,-0.021621301770210266]', 'k': 5}]
+(Background on this error at: https://sqlalche.me/e/20/f405)

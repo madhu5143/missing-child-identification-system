@@ -1,0 +1,3 @@
+c92e70b6 vs 3df0b130: Dist=0.729, Score=0.392
+c92e70b6 vs 6264b04d: Dist=0.729, Score=0.392
+3df0b130 vs 6264b04d: Dist=0.000, Score=1.000

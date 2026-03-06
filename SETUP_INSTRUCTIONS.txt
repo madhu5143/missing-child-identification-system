@@ -1,0 +1,20 @@
+# Environment Setup Instructions
+
+It appears your system is missing Python and Node.js, which are required for this project.
+
+## 1. Install Python (Required for Backend)
+We will attempt to install Python 3.11 via `winget`.
+Command: `winget install -e --id Python.Python.3.11`
+
+Alternatively, download and install from: https://www.python.org/downloads/
+**IMPORTANT**: Check "Add Python to PATH" during installation.
+
+## 2. Install Node.js (Required for Frontend)
+We also need Node.js for the React frontend.
+Command: `winget install -e --id OpenJS.NodeJS.LTS`
+
+Alternatively, download and install from: https://nodejs.org/
+
+## 3. Restart Terminal
+After installation, **you must restart your terminal/IDE** (e.g., VS Code) for the changes to take effect.
+Then try running the commands again.

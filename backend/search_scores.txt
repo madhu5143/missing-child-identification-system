@@ -1,0 +1,4 @@
+> Query: c92e70b6-d924-4036-8e65-b23542f2eb4b.jpg
+DB: ID=1, Name=madhu, Status=found -> Dist=0.539, Score=0.551
+DB: ID=3, Name=surya, Status=found -> Dist=0.729, Score=0.392
+DB: ID=4, Name=ram, Status=missing -> Dist=0.000, Score=1.000
