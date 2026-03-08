@@ -12,7 +12,7 @@ supabase==2.3.7
 numpy==1.26.4
 opencv-python-headless
 deepface==0.0.92
-tensorflow-intel==2.15.0
+tensorflow==2.15.0
 tf-keras==2.15.0
 mtcnn==0.1.1
 gunicorn==21.2.0

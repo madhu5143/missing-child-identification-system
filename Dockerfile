@@ -10,7 +10,7 @@ COPY frontend/ ./
 RUN NODE_OPTIONS="--max-old-space-size=400" npm run build
 
 # --- Stage 2: Backend & Runtime ---
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 # Install system dependencies for OpenCV and Face Recognition
 RUN apt-get update && apt-get install -y \
