@@ -3,7 +3,7 @@ import concurrent.futures
 import os
 
 # Create exactly 1 persistent background OS process for all TF operations
-_ml_executor = concurrent.futures.ProcessPoolExecutor(max_workers=1)
+_ml_executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
 
 def _run_ml_process(image_path, model_name, detector_backend):
     """
