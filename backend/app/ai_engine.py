@@ -21,10 +21,9 @@ class AIEngine:
     def __init__(self):
         # High-accuracy verification models
         self.primary_model = "ArcFace"
-        self.secondary_model = "Facenet512"
         # Standardizing on mtcnn as a robust fallback due to tf-keras conflicts
         self.detector_backend = "mtcnn" 
-        print(f"AIEngine Initialized: Dual-Model Verification ({self.primary_model} & {self.secondary_model}) using mtcnn")
+        print(f"AIEngine Initialized: Single-Model Verification ({self.primary_model}) using mtcnn")
 
     def get_embedding(self, image_path: str) -> dict:
         """
@@ -41,21 +40,11 @@ class AIEngine:
                 align=True
             )
             
-            # 2. Extract Secondary (Facenet512) using unified pipeline (align=True)
-            res_secondary = DeepFace.represent(
-                img_path=image_path, 
-                model_name=self.secondary_model, 
-                detector_backend=self.detector_backend, 
-                enforce_detection=False, 
-                align=True
-            )
-            
-            if not res_primary or not res_secondary:
+            if not res_primary:
                 raise ValueError("No face detected in the image.")
                 
             return {
-                "arcface": list(res_primary[0]["embedding"]),
-                "facenet512": list(res_secondary[0]["embedding"])
+                "arcface": list(res_primary[0]["embedding"])
             }
             
         except Exception as e:
@@ -89,20 +78,10 @@ class AIEngine:
         if "arcface" not in dict1 or "arcface" not in dict2:
             return 0.0
             
-        if "facenet512" not in dict1 or "facenet512" not in dict2:
-            # Fallback if facenet failed to generate for some reason
-            return self._compute_single_sim(dict1.get("arcface", []), dict2.get("arcface", []), 0.33)
-
-        # 1. Compute Primary (ArcFace)
+        # Single-Model Verification (ArcFace)
         arc_sim = self._compute_single_sim(dict1["arcface"], dict2["arcface"], 0.33)
-        # 2. Compute Secondary (Facenet512)
-        face_sim = self._compute_single_sim(dict1["facenet512"], dict2["facenet512"], 0.50)
 
-        # 3. Multi-Model Verification
-        if arc_sim > 0.0 and face_sim > 0.0:
-            return (arc_sim + face_sim) / 2.0
-        else:
-            return 0.0
+        return arc_sim
 
     def _compute_single_sim(self, e1: list, e2: list, strict_threshold: float) -> float:
         arr1 = np.array(e1)
