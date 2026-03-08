@@ -298,6 +298,17 @@ def update_case(
         raise HTTPException(status_code=403, detail="Not authorized to update this case")
 
     update_data = case_update.model_dump(exclude_unset=True)
+    
+    # Sync is_resolved flag if status was manually changed back to missing
+    if "status" in update_data and update_data["status"] == "missing":
+        case.is_resolved = False
+        case.resolved_at = None
+        case.resolved_by = None
+    elif "status" in update_data and update_data["status"] == "found":
+        case.is_resolved = True
+        case.resolved_at = case.resolved_at or datetime.utcnow()
+        case.resolved_by = case.resolved_by or current_user.id
+
     for key, value in update_data.items():
         setattr(case, key, value)
     

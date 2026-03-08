@@ -22,9 +22,9 @@ class AIEngine:
         # High-accuracy verification models
         self.primary_model = "ArcFace"
         self.secondary_model = "Facenet512"
-        # Standardizing on retinaface everywhere as requested
-        self.detector_backend = "retinaface" 
-        print(f"AIEngine Initialized: Dual-Model Verification ({self.primary_model} & {self.secondary_model}) using RetinaFace")
+        # Standardizing on mtcnn as a robust fallback due to tf-keras conflicts
+        self.detector_backend = "mtcnn" 
+        print(f"AIEngine Initialized: Dual-Model Verification ({self.primary_model} & {self.secondary_model}) using mtcnn")
 
     def get_embedding(self, image_path: str) -> dict:
         """

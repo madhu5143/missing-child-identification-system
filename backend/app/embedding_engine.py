@@ -26,8 +26,8 @@ class EmbeddingEngine:
     def __init__(self):
         # By strict instruction, we only use ArcFace for vector embeddings
         self.model_name = "ArcFace"
-        # Standardizing on retinaface as the high-accuracy detector backend
-        self.detector_backend = "retinaface" 
+        # Standardizing on mtcnn as a robust fallback with no keras dependencies
+        self.detector_backend = "mtcnn" 
 
     def get_embedding(self, image_path: str) -> np.ndarray:
         """
