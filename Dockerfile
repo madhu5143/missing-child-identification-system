@@ -3,9 +3,11 @@ FROM node:20-slim AS frontend-builder
 WORKDIR /app
 COPY frontend/package*.json ./frontend/
 WORKDIR /app/frontend
-RUN npm install
+# Use --no-audit and --no-fund to save memory, and npm ci for a cleaner install
+RUN npm ci --no-audit --no-fund
 COPY frontend/ ./
-RUN npm run build
+# Set memory limit for Node.js build process to fit within Railway's constrained RAM
+RUN NODE_OPTIONS="--max-old-space-size=400" npm run build
 
 # --- Stage 2: Backend & Runtime ---
 FROM python:3.10-slim
