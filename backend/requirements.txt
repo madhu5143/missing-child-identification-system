@@ -21,3 +21,4 @@ pillow==10.2.0
 ml-dtypes==0.2.0
 protobuf==4.25.3
 pgvector==0.2.5
+email-validator==2.1.0.post1
